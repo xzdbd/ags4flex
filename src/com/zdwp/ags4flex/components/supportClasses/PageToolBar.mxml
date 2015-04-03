@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!---
+	分页控件工具栏.
+
+	@author 郝超
+	创建于 2013-7-12,下午3:09:54.
+-->
+<s:HGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" 
+		  xmlns:labels="com.zdwp.as3core.components.labels.*"
+		  width="100%" 
+		  gap="4"
+		  verticalAlign="middle" >
+	
+	<fx:Script>
+		<![CDATA[
+			/**
+			 * 首页。
+			 */
+			public static const FIRST_PAGE:String = "firstPage";
+			/**
+			 * 上一页。
+			 */
+			public static const PRE_PAGE:String = "prePage";
+			/**
+			 * 下一页。
+			 */
+			public static const NEXT_PAGE:String = "nextPage";
+			/**
+			 * 末页。
+			 */
+			public static const LAST_PAGE:String = "lastPage";
+			
+			
+			private var _selectedState:String;
+
+			/**
+			 * 当前选择的操作状态字符串。
+			 */
+			public function get selectedAction():String
+			{
+				return _selectedState;
+			}
+
+			/**
+			 * 更新分页控制按钮状态。
+			 * @param currentPage 当前页码。
+			 * @param allPagesCount 分页总页数。
+			 */
+			public function updateToolBarState(currentPage:int, allPagesCount:int):void
+			{
+				firstPageLbl.enabled=true;
+				prePageLbl.enabled=true;
+				nextPageLbl.enabled=true;
+				lastPageLbl.enabled=true;
+				inputIndex.text = "";
+				
+				//第一页
+				if(currentPage <= 1)
+				{
+					firstPageLbl.enabled = false;
+					prePageLbl.enabled = false;
+				}
+				//最后一页
+				if(currentPage >= allPagesCount)
+				{
+					nextPageLbl.enabled = false;
+					lastPageLbl.enabled = false;
+				}
+			}
+			
+			/**
+			 * 工具栏工具单击事件处理函数。
+			 */
+			private function toolBarMouseClickHandler(event:MouseEvent):void
+			{
+				var selectedLabel:LinkLabel = event.target as LinkLabel;
+				if(selectedLabel == firstPageLbl)
+				{
+					_selectedState = FIRST_PAGE;
+				}
+				else if(selectedLabel == prePageLbl)
+				{
+					_selectedState = PRE_PAGE;
+				}
+				else if(selectedLabel == nextPageLbl)
+				{
+					_selectedState = NEXT_PAGE;
+				}
+				else if(selectedLabel == lastPageLbl)
+				{
+					_selectedState = LAST_PAGE;
+				}
+				else if(selectedLabel == specialPageLbl)
+				{
+					_selectedState = inputIndex.text;
+				}
+				dispatchEvent(new Event("linkClick", true)); // bubbles
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Metadata>
+		/**
+		* 当用户单击LinkButton时分派。
+		*/
+		[Event(name="linkClick", type="flash.events.Event")]
+	</fx:Metadata>
+	
+	<!--- 首页文本链接 -->
+	<labels:LinkLabel id="firstPageLbl"
+					  text="首页" 
+					  click="toolBarMouseClickHandler(event)" 
+					  mouseEnabled="{firstPageLbl.enabled}" 
+					  color="0x0000FF" 
+					  rollOverColor="0xFF0000" 
+					  underline="true"/>
+	
+	<!--- 上一页文本链接 -->
+	<labels:LinkLabel id="prePageLbl" 
+					  text="上一页" 
+					  click="toolBarMouseClickHandler(event)" 
+					  mouseEnabled="{prePageLbl.enabled}" 
+					  color="0x0000FF" 
+					  rollOverColor="0xFF0000" 
+					  underline="true"/>
+	
+	<!--- 下一页文本链接 -->
+	<labels:LinkLabel id="nextPageLbl" 
+					  text="下一页" 
+					  click="toolBarMouseClickHandler(event)" 
+					  mouseEnabled="{nextPageLbl.enabled}" 
+					  color="0x0000FF" 
+					  rollOverColor="0xFF0000" 
+					  underline="true"/>
+	
+	<!--- 末页文本链接 -->
+	<labels:LinkLabel id="lastPageLbl" 
+					  text="末页"
+					  click="toolBarMouseClickHandler(event)" 
+					  mouseEnabled="{lastPageLbl.enabled}" 
+					  color="0x0000FF" 
+					  rollOverColor="0xFF0000"
+					  underline="true"/>
+	
+	<!--- 指定页跳转输入文本框 -->
+	<s:TextInput id="inputIndex"  restrict="0-9" width="25" height="20"/>
+	
+	<!--- 指定页跳转文本链接 -->
+	<labels:LinkLabel id="specialPageLbl"
+					  text="跳转" 
+					  click="toolBarMouseClickHandler(event)" 
+					  color="0x0000FF" 
+					  rollOverColor="0xFF0000" 
+					  underline="true"/>
+</s:HGroup>
+
+
+
+
+
+
+
+
+
+
+

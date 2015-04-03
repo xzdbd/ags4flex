@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!---
+	自定义地图比例尺 Skin（单位为 m 或者 km）.
+
+	@author 郝超
+	创建于 2012-9-26,上午10:31:27.
+-->
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		minWidth="200">
+	
+	<!-- host component -->
+	<fx:Metadata>
+		/**
+		* 宿主组件。
+		*/
+		[HostComponent("com.esri.ags.components.ScaleBar")]
+	</fx:Metadata>
+	
+	<fx:Declarations>
+		<!--- @private -->
+		<s:SolidColorStroke id="solidColorStroke"
+							color="0x000000"
+							weight="2"/>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			/**
+			 * Here we override the measure method and adjust the position of parts _before_ we
+			 * call the super.measure that will define the width and height based on the newly position.
+			 */
+			override protected function measure():void
+			{
+				label.text = hostComponent.textMetric;
+				if(label.text)
+					label.text = label.text.replace("km","千米").replace("m","米");
+				label.x = hostComponent.lengthMetric + 5;
+				label.y = (15 - label.getExplicitOrMeasuredHeight() / 2);
+				
+				//label.text = hostComponent.textMetric;
+				//label.x = hostComponent.lengthMetric - label.getExplicitOrMeasuredWidth() * 0.5;
+				
+				super.measure();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:filters>
+		<mx:GlowFilter alpha="1"
+					   blurX="3"
+					   blurY="3"
+					   color="0xFFFFFF"
+					   strength="7"/>
+	</s:filters>
+	
+	<!-- Vertical line on the left edge -->
+	<s:Line stroke="{solidColorStroke}"
+			xFrom="0"
+			xTo="0"
+			yFrom="4"
+			yTo="12"/>
+	
+	<!-- Horizontal line from left edge to right most edge -->
+	<s:Line stroke="{solidColorStroke}"
+			xFrom="0"
+			xTo="{hostComponent.lengthMetric}"
+			yFrom="12"
+			yTo="12"/>
+	
+	<!-- Vertical line to indicate the km/meter tick -->
+	<s:Line stroke="{solidColorStroke}"
+			xFrom="{hostComponent.lengthMetric}"
+			xTo="{hostComponent.lengthMetric}"
+			yFrom="4"
+			yTo="12"/>
+	
+	<!--- Label to display metric text. -->
+	<s:Label id="label"
+			 fontFamily="Verdana"
+			 fontSize="10"
+			 fontWeight="bold"/>
+	
+</s:Skin>
+
+

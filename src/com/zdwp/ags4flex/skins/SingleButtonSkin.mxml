@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!---
+	地图工具默认按钮皮肤类.
+	
+	@author 郝超
+	创建于 2013-5-22,下午4:14:08.
+-->
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		alpha.disabled="0.5">
+	
+	<fx:Metadata>
+		<![CDATA[
+		/**
+		* @copy spark.skins.default.ApplicationSkin#hostComponent
+		*/
+		[HostComponent("com.zdwp.ags4flex.components.mapTools.supportClasses.NavSingleButton")]
+		]]>
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import com.zdwp.ags4flex.components.mapTools.supportClasses.NavSingleButton;
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over" stateGroups="overStates"/>
+		<s:State name="down" stateGroups="downStates"/>
+		<s:State name="disabled" stateGroups="disabledStates"/>
+		<s:State name="upAndSelected" stateGroups="selectedStates, selectedUpStates"/>
+		<s:State name="overAndSelected" stateGroups="overStates, selectedStates"/>
+		<s:State name="downAndSelected" stateGroups="downStates, selectedStates"/>
+		<s:State name="disabledAndSelected" stateGroups="selectedUpStates, disabledStates, selectedStates"/>
+	</s:states>
+	
+	<s:Rect horizontalCenter="0"
+			minHeight="25"
+			minWidth="22"
+			radiusX="3"
+			radiusY="3"
+			verticalCenter="0">
+		<s:fill>
+			<s:LinearGradient x="114" y="18.5"
+							  rotation="-90"
+							  scaleX="15.5724">
+				<s:GradientEntry alpha="{getStyle('contentBackgroundAlpha')}"
+								 color="{getStyle('contentBackgroundColor')}"
+								 color.down="{getStyle('rollOverColor')}"
+								 color.over="{getStyle('rollOverColor')}"
+								 color.overAndSelected="{getStyle('rollOverColor')}"
+								 color.selectedUpStates="{getStyle('selectionColor')}"
+								 ratio="0"/>
+			</s:LinearGradient>
+		</s:fill>
+		<s:stroke>
+			<s:SolidColorStroke alpha="{getStyle('contentBackgroundAlpha')}"
+								color="{getStyle('contentBackgroundColor')}"
+								color.disabled="#888888"
+								color.overAndSelected="{getStyle('focusColor')}"
+								color.selectedUpStates="{getStyle('focusColor')}"
+								joints="miter"
+								miterLimit="10"
+								weight="2"/>
+		</s:stroke>
+	</s:Rect>
+	
+	<mx:Image source="{this.hostComponent.iconUrl}" 
+			  visible="{this.hostComponent.iconUrl != null}"
+			  width="18" height="18"
+			  horizontalCenter="0"
+			  verticalCenter="0"/>
+	
+</s:Skin>
+
+
+
