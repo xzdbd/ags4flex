@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!---
+	图层控制树状列表组件.
+
+	@mxml
+	<p> 
+	下面代码演示如何使用 <code>LayerListControl</code> 类： 
+	<p>首先，引用命名空间  <b><code>xmlns:ags="http://www.xzdbd.net/2013/flex/ags"</code></b>，调用如下：</p>
+	<pre>
+	&lt;ags:LayerListControl
+		<b>Properties</b>
+		map="{map}"
+		configXML="{configXML}"
+		useLayerFadeEffect="false"
+
+		<b>Styles</b>
+		width="100%" 
+		height="100%" /&gt;
+	
+	其中，<code>map</code> 为地图 Map 的引用，<code>configXML</code> 为系统配置文件 XML 对象.
+	</pre>
+	</p>
+
+	@author 郝超
+	创建于 2012-4-10,下午09:33:02.
+-->
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:classes="com.xzdbd.ags4flex.components.layerControlClasses.classes.*"
+		 width="100%" height="100%" >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.events.LayerEvent;
+			import com.esri.ags.events.MapEvent;
+			import com.esri.ags.layers.ArcGISDynamicMapServiceLayer;
+			import com.esri.ags.layers.FeatureLayer;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.layers.Layer;
+			import com.xzdbd.ags4flex.IconAssets;
+			import com.xzdbd.ags4flex.components.layerControlClasses.classes.LayerItem;
+			import com.xzdbd.ags4flex.components.layerControlClasses.utils.MapLayerInfoManager;
+			import com.xzdbd.ags4flex.components.layerControlClasses.utils.MapUtil;
+			
+			import mx.collections.ArrayCollection;
+			import mx.effects.Effect;
+			import mx.events.CollectionEvent;
+			import mx.events.CollectionEventKind;
+			import mx.events.ListEvent;
+			import mx.managers.CursorManager;
+			
+			import spark.effects.Fade;
+			
+			//分级存放组织后的图层信息
+			[Bindable]
+			private var mapLayersInfoAC:ArrayCollection;
+			
+			//配置文件对象
+			private var _configXML:XML;
+			
+			//地图对象
+			private var _map:Map;
+			private var _mapChanged:Boolean = false;
+			
+			//排除的Map中的地图服务图层集
+			private var _excludeMapLayers:ArrayCollection;
+			
+			//排除的地图服务子图层
+			private var _excludeSubLayers:ArrayCollection;
+			
+			//指定显示的子图层
+			private var _specialSubLayers:ArrayCollection;
+			
+			private var _layerFiltersChanged:Boolean = false;
+			
+			//使用在图层打开和关闭时的效果。
+			private var _fade:Effect;
+			//单位：毫秒
+			private var _fadeDuration:Number = 250; 
+			private var _useLayerFadeEffect:Boolean = false;
+			private var _useLayerFadeEffectChanged:Boolean = false;
+			
+			
+			//================================================== 属性 getter/setter 开始 ================================
+			
+			//--------------------------------------------------------------------------
+			//  ConfigXML
+			//--------------------------------------------------------------------------
+			/**
+			 * 外部配置文件对象。
+			 */
+			[Bindable]
+			public function get configXML():XML
+			{
+				return _configXML;
+			}
+			/**
+			 * @private
+			 */
+			public function set configXML(value:XML):void
+			{
+				_configXML = value;
+			}
+			
+			//--------------------------------------------------------------------------
+			//  map
+			//--------------------------------------------------------------------------
+			/**
+			 * 地图Map对象。
+			 */
+			[Bindable("mapChanged")]
+			public function get map():Map
+			{
+				return _map;
+			}
+			/**
+			 * @private
+			 */
+			public function set map(value:Map):void
+			{
+				if (value != _map)
+				{
+					removeMapListeners();
+					_map = value;
+					addMapListeners();
+					
+					_mapChanged = true;
+					invalidateProperties();
+					
+					dispatchEvent(new Event("mapChanged"));
+				}
+			}
+			
+			//--------------------------------------------------------------------------
+			//  excludeMapLayers
+			//--------------------------------------------------------------------------
+			/**
+			 * 不被包含在图层树状列表中的地图服务图层集合。
+			 */
+			[Bindable("excludeLayersChanged")]
+			public function get excludeMapLayers():ArrayCollection
+			{
+				return _excludeMapLayers;
+			}
+			/**
+			 * @private
+			 */
+			public function set excludeMapLayers(value:ArrayCollection):void
+			{
+				removeLayerFilterListeners(_excludeMapLayers);
+				_excludeMapLayers = value;
+				addLayerFilterListeners(_excludeMapLayers);
+				
+				onFilterChange();
+				dispatchEvent(new Event("excludeLayersChanged"));
+			}
+			
+			//-------------------------------------------------------------------------
+			// excludeSubLayers
+			//-------------------------------------------------------------------------
+			/**
+			 * 不被包含在图层树状列表中的指定地图服务中的子图层集合。
+			 */
+			[Bindable("excludeSubLayersChanged")]
+			public function get excludeSubLayers():ArrayCollection
+			{
+				return _excludeSubLayers;
+			}
+			/**
+			 * @private
+			 */
+			public function set excludeSubLayers(value:ArrayCollection):void
+			{
+				removeLayerFilterListeners(_excludeSubLayers);
+				_excludeSubLayers = value;
+				addLayerFilterListeners(_excludeSubLayers);
+				
+				onFilterChange();
+				dispatchEvent(new Event("excludeSubLayersChanged"));
+			}
+			
+			//-------------------------------------------------------------------------
+			// specialSubLayers
+			//-------------------------------------------------------------------------
+			/**
+			 * 指定要包含到图层树状列表中的子图层集合（一般是指不在Map中的或者例外的图层）。
+			 * <br>注意：该属性尚处调试阶段，目前尚不可用。
+			 */
+			[Bindable("specialSubLayersChanged")]
+			public function get specialSubLayers():ArrayCollection
+			{
+				return _specialSubLayers;
+			}
+			/**
+			 * @private
+			 */
+			public function set specialSubLayers(value:ArrayCollection):void
+			{
+				removeLayerFilterListeners(_specialSubLayers);
+				_specialSubLayers = value;
+				addLayerFilterListeners(_specialSubLayers);
+				
+				onFilterChange();
+				dispatchEvent(new Event("specialSubLayersChanged"));
+			}
+			
+			//--------------------------------------------------------------------------
+			//  useLayerFadeEffect
+			//--------------------------------------------------------------------------
+			[Bindable("useLayerFadeEffectChanged")]
+			[Inspectable(category="Mapping", defaultValue="false")]
+			/**
+			 * 指定是否在图层状态改变时使用渐变（淡入淡出）效果，默认为 false。
+			 * @default false.
+			 */
+			public function get useLayerFadeEffect():Boolean
+			{
+				return _useLayerFadeEffect;
+			}
+			/**
+			 * @private
+			 */
+			public function set useLayerFadeEffect(value:Boolean):void
+			{
+				if (value != _useLayerFadeEffect)
+				{
+					_useLayerFadeEffect = value;
+					
+					_useLayerFadeEffectChanged = true;
+					invalidateProperties();
+					
+					dispatchEvent(new Event("useLayerFadeEffectChanged"));
+				}
+			}
+			
+			//================================================== 属性 getter/setter 结束 ================================
+			
+			
+			//==================================== 重写方法 ===================================
+			
+			/**
+			 * 重写父类 commitProperties 方法。
+			 */
+			override protected function commitProperties():void
+			{
+				super.commitProperties();
+				
+				if (_mapChanged || _layerFiltersChanged)
+				{
+					_mapChanged = false;
+					_layerFiltersChanged = false;
+					
+					if(specialSubLayers && specialSubLayers.length == 0)
+					{
+						registerAllMapLayers();
+					}
+				}
+				
+				if (_useLayerFadeEffectChanged)
+				{
+					_useLayerFadeEffectChanged = false;
+					
+					MapUtil.forEachMapLayer(map, function(layer:Layer):void
+					{
+						setLayerFadeEffect(layer);
+					});
+				}
+			}
+			
+			
+			//==================================== 自定义方法 ===================================
+			
+			/**
+			 * 组件初始化函数。
+			 */
+			private function initLayerList():void
+			{
+				excludeMapLayers = getExcludeMapLayers();
+				excludeSubLayers = getExcludeSubLayers();
+				specialSubLayers = getSpecialSubLayers();
+					
+				mapLayersInfoAC = new ArrayCollection();
+				doubleClickEnabled = true;
+				layerListTree.addEventListener(ListEvent.ITEM_DOUBLE_CLICK, onItemDoubleClick);
+			}
+			
+			/**
+			 * 从配置文件中获取例外地图服务图层。
+			 */
+			private function getExcludeMapLayers():ArrayCollection
+			{
+				var result:ArrayCollection = new ArrayCollection();
+				if (configXML)
+				{
+					var layers:XMLList = configXML.excludeMapLayer as XMLList;
+					for (var i:Number = 0; i < layers.length(); i++)
+					{
+						result.addItem(layers[i].toString());
+					}
+				}
+				return result;
+			}
+			
+			/**
+			 * 从配置文件中获取例外子图层。
+			 */
+			private function getExcludeSubLayers():ArrayCollection
+			{
+				var result:ArrayCollection = new ArrayCollection();
+				if (configXML)
+				{
+					var layers:XMLList = configXML.excludeSubLayer as XMLList;
+					for (var i:Number = 0; i < layers.length(); i++)
+					{
+						var layerObj:Object = new Object();
+						layerObj.mapLayerName = layers[i].@mapLayerName.toString();
+						layerObj.subLayerName = layers[i].@subLayerName.toString();
+						result.addItem(layerObj);
+					}
+				}
+				return result;
+			}
+			
+			/**
+			 * 从配置文件中获取指定子图层。
+			 */
+			private function getSpecialSubLayers():ArrayCollection
+			{
+				var result:ArrayCollection = new ArrayCollection();
+				if (configXML)
+				{
+					var layers:XMLList = configXML.specialSubLayer as XMLList;
+					for (var i:Number = 0; i < layers.length(); i++)
+					{
+						var layerObj:Object = new Object();
+						layerObj.mapLayerName = layers[i].@mapLayerName.toString();
+						layerObj.subLayerName = layers[i].@subLayerName.toString();
+						result.addItem(layerObj);
+					}
+				}
+				return result;
+			}
+			
+			/**
+			 * 展开所有的树状节点对应图层。
+			 */
+			private function expandLayerItems():void
+			{
+				validateNow();
+				expandItems(mapLayersInfoAC);
+			}
+			
+			/**
+			 * 展开指定数据集合的树状节点对应图层。
+			 */
+			private function expandItems(layerInfoAC:ArrayCollection):void
+			{
+				for each (var layerItem:LayerItem in layerInfoAC)
+				{
+					if (!layerItem.isLeafNode)
+					{
+						expandItems(layerItem.children);
+						layerListTree.expandItem(layerItem, true);
+					}
+				}
+			}
+			
+			/**
+			 * 添加地图监听。
+			 */
+			private function addMapListeners():void
+			{
+				if (map)
+				{
+					map.addEventListener(MapEvent.LAYER_ADD, onLayerAdd, false, 0, true);
+					map.addEventListener(MapEvent.LAYER_REMOVE, onLayerRemove, false, 0, true);
+					map.addEventListener(MapEvent.LAYER_REMOVE_ALL, onLayerRemoveAll, false, 0, true);
+				}
+			}
+			
+			/**
+			 * 移除地图监听。
+			 */
+			private function removeMapListeners():void
+			{
+				if (map)
+				{
+					map.removeEventListener(MapEvent.LAYER_ADD, onLayerAdd);
+					map.removeEventListener(MapEvent.LAYER_REMOVE, onLayerRemove);
+					map.removeEventListener(MapEvent.LAYER_REMOVE_ALL, onLayerRemoveAll);
+				}
+			}
+			
+			/**
+			 * 在新图层添加到 Map 中时调用，注册新添加到 Map 中的图层到 TOC 树。
+			 */
+			private function onLayerAdd(event:MapEvent):void
+			{
+				registerMapLayer(event.layer);
+			}
+			
+			/**
+			 * 在 Map 中的图层移除时调用，把 Map 中的指定图层从 TOC 树上移除。
+			 */
+			private function onLayerRemove(event:MapEvent):void
+			{
+				unregisterMapLayer(event.layer);
+			}
+			
+			/**
+			 * 在 Map 中的所有图层移除时调用，把 Map 中的所有图层从 TOC 树上移除。
+			 */
+			private function onLayerRemoveAll(event:MapEvent):void
+			{
+				unregisterAllMapLayers();
+			}
+			
+			/**
+			 * 获取新添加到 Map 中的图层 id 集。
+			 * @param layerIds 传入的所有已注册图层 id。 
+			 * @return 新添加到 Map 中的图层 id 集。
+			 */
+			private function getNewLayerIds(layerIds:Array):Array
+			{
+				var result:Array = [];
+				var mapLayers:ArrayCollection = ArrayCollection(map.layers);
+				for (var i:int = 0; i < layerIds.length; i++)
+				{
+					var layer:Layer = mapLayers.getItemAt(i) as Layer
+					if (isHiddenLayer(layer) || isGraphicsLayer(layer))
+					{
+						continue;
+					}
+					result.push(layerIds[i]);
+				}
+				
+				return result;
+			}
+			
+			/**
+			 * 判断指定图层是否为 GraphicsLayer。
+			 * @param layer 传入的待判断图层对象。
+			 * @return 如果传入图层对象为 GraphicsLayer，返回 true，否则返回 false。
+			 */
+			private function isGraphicsLayer(layer:Layer):Boolean
+			{
+				return (layer is GraphicsLayer) && !(layer is FeatureLayer);
+			}
+			
+			/**
+			 * 把 Map 中的所有图层从 TOC 树上移除。
+			 */
+			private function unregisterAllMapLayers():void
+			{
+				if(mapLayersInfoAC)
+					mapLayersInfoAC.removeAll();
+				for (var i:int = 0; i < mapLayersInfoAC.length; i++)
+				{
+					var item:LayerItem = mapLayersInfoAC[i] as LayerItem;
+					item.mapLayer.removeEventListener(LayerEvent.UPDATE_END, removeBusyCursor);
+				}
+			}
+			
+			/**
+			 * 把 Map 中的指定图层从 TOC 树上移除。
+			 * @param 待移除的图层对象。
+			 */
+			private function unregisterMapLayer(layer:Layer):void
+			{
+				for (var i:int = 0; i < mapLayersInfoAC.length; i++)
+				{
+					var item:LayerItem = mapLayersInfoAC[i] as LayerItem;
+					if (item && !item.parent && item.mapLayer === layer)
+					{
+						mapLayersInfoAC.removeItemAt(i);
+						item.mapLayer.removeEventListener(LayerEvent.UPDATE_END, removeBusyCursor);
+						break;
+					}
+				}
+			}
+			
+			/**
+			 * 注册新添加到 Map 中的所有图层到 TOC 树。
+			 */
+			private function registerAllMapLayers():void
+			{
+				unregisterAllMapLayers();
+				MapUtil.forEachMapLayer(map, function(layer:Layer):void
+				{
+					registerMapLayer(layer);
+				});
+			}
+			
+			/**
+			 * 注册新添加到 Map 中的图层到 TOC 树。
+			 * @param layer 新添加到 Map 的地图图层。
+			 */
+			private function registerMapLayer(layer:Layer):void
+			{
+				//监听图层加载
+				if (! layer.loaded)
+				{
+					layer.addEventListener(LayerEvent.LOAD, layer_loadHandler);
+					function layer_loadHandler(event:LayerEvent):void
+					{
+						registerMapLayer(layer);
+					}
+					return;
+				}
+				
+				//注册图层
+				if (filterOutLayer(layer))
+				{
+					return;
+				}
+				
+				if(layer is ArcGISDynamicMapServiceLayer)
+				{
+					var layerItem:LayerItem = MapLayerInfoManager.getLayerInfo(layer, excludeSubLayers);
+					if(layerItem && !filterSameLayerItem(layerItem))
+					{
+						mapLayersInfoAC.addItem(layerItem);
+						//监听图层更新完成，移除鼠标忙碌状态
+						//此处包含两种情况，一种是人机交互直接对checkbox进行操作，另外一种是通过代码直接对该图层进行更新操作
+						//这两种情况都会诱发图层更新事件
+						layerItem.mapLayer.addEventListener(LayerEvent.UPDATE_END, removeBusyCursor, false, 0, true);
+					}
+				}
+				
+				// Init any layer properties, styles, and effects
+				if (useLayerFadeEffect)
+				{
+					setLayerFadeEffect(layer);
+				}
+				
+				//展开所有树节点
+				expandLayerItems();
+			}
+			
+			/**
+			 * 过滤相同图层对象
+			 * @param layerItem 当前操作图层对象
+			 * @return 在当前图层对象已存在时，返回true，否则返回false。
+			 */
+			private function filterSameLayerItem(layerItem:LayerItem):Boolean
+			{
+				for each(var layer:LayerItem in mapLayersInfoAC)
+				{
+					if(layer.layerUrl == layerItem.layerUrl)
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			/**
+			 * 根据过滤规则检查指定图层是否应该被过滤掉。
+			 * @param layer 待检查图层对象。
+			 * @return 如果检查图层应该被过滤，返回 true，否则返回 false 。
+			 */
+			private function filterOutLayer(layer:Layer):Boolean
+			{
+				var exclude:Boolean = false;
+				if (isHiddenLayer(layer))
+				{
+					exclude = true;
+				}
+				if (!exclude && excludeMapLayers)
+				{
+					exclude = false;
+					for each (var item:* in excludeMapLayers)
+					{
+						if ((item === layer || item == layer.name) || (item == layer.id))
+						{
+							exclude = true;
+							break;
+						}
+					}
+				}
+				
+				return exclude;
+			}
+			
+			/**
+			 * 判断指定图层是否为被隐藏图层。
+			 * @param layer 待判断图层。
+			 * @return 如果当前图层为被隐藏图层，则返回 true，否则返回 false 。
+			 */
+			private function isHiddenLayer(layer:Layer):Boolean
+			{
+				var isHidden:Boolean = layer.name.indexOf("hiddenLayer_") > -1;
+				
+				return isHidden;
+			}
+			
+			/**
+			 * 设置图层显示/隐藏效果。
+			 * @param layer 输入图层对象。
+			 */
+			private function setLayerFadeEffect(layer:Layer):void
+			{
+				if (useLayerFadeEffect)
+				{
+					// Lazy load the effect
+					if (!_fade)
+					{
+						_fade = new Fade();
+						_fade.duration = _fadeDuration;
+					}
+					layer.setStyle("showEffect", _fade);
+					layer.setStyle("hideEffect", _fade);
+				}
+				else
+				{
+					layer.clearStyle("showEffect");
+					layer.clearStyle("hideEffect");
+				}
+			}
+			
+			/**
+			 * 添加/删除图层过滤监听。
+			 */
+			private function addLayerFilterListeners(filter:ArrayCollection):void
+			{
+				if (filter)
+				{
+					filter.addEventListener(CollectionEvent.COLLECTION_CHANGE, onFilterChange, false, 0, true);
+				}
+			}
+			private function removeLayerFilterListeners(filter:ArrayCollection):void
+			{
+				if (filter)
+				{
+					filter.removeEventListener(CollectionEvent.COLLECTION_CHANGE, onFilterChange);
+				}
+			}
+			
+			/**
+			 * 过滤器更改时调用该函数。
+			 */
+			private function onFilterChange(event:CollectionEvent = null):void
+			{
+				var isValidChange:Boolean = false;
+				if (event == null)
+				{
+					// Called directly from the setters
+					isValidChange = true;
+				}
+				else
+				{
+					// Only act on certain kinds of collection changes.
+					// Specifically, avoid acting on the UPDATE kind.
+					// It causes unwanted refresh of the TOC model.
+					switch (event.kind)
+					{
+						case CollectionEventKind.ADD:
+						case CollectionEventKind.REMOVE:
+						case CollectionEventKind.REPLACE:
+						case CollectionEventKind.REFRESH:
+						case CollectionEventKind.RESET:
+						{
+							isValidChange = true;
+						}
+					}
+				}
+				
+				if (isValidChange)
+				{
+					_layerFiltersChanged = true;
+					invalidateProperties();
+				}
+			}
+			
+			/**
+			 * 树节点鼠标双击事件处理函数，双击展开/收缩树节点。
+			 */
+			private function onItemDoubleClick(event:ListEvent):void
+			{
+				if (event.itemRenderer && event.itemRenderer.data)
+				{
+					var item:Object = event.itemRenderer.data;
+					layerListTree.expandItem(item, !layerListTree.isItemOpen(item), true, true, event);
+				}
+			}
+			
+			/**
+			 * 移除鼠标忙碌状态。
+			 */
+			private function removeBusyCursor(event:LayerEvent):void
+			{
+				CursorManager.removeBusyCursor();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<s:VGroup width="100%" height="100%">
+		<!---
+			图层列表树组件。
+			@see com.xzdbd.ags4flex.components.layerControl.classes.LayerList.
+			@private
+		-->
+		<classes:LayerList id="layerListTree"
+						   creationComplete="initLayerList()"
+						   dataProvider="{mapLayersInfoAC}"
+						   disclosureOpenIcon="{IconAssets.iconClass('disclosureOpenIconClass')}"
+						   disclosureClosedIcon="{IconAssets.iconClass('disclosureClosedIconClass')}"
+						   labelField="label"
+						   showDataTips="true"
+						   dataTipField="label"
+						   checkBoxBgColor="0x333333"
+						   checkBoxBgAlpha="1.0"
+						   checkBoxStateField="state" 
+						   verticalScrollPolicy="auto"
+						   width="100%" height="100%"
+						   borderVisible="false"
+						   itemIconVisible="false"
+						   useTreeStyle="false" />
+		
+	</s:VGroup>
+</s:Group>
+
+
+
+
+
+
+

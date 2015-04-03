@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!---
+	InfoWindow弹出窗模板(Content)基类，其实该类就是一个实现了IDataRenderer接口的 Group 容器.
+
+	<p>可以直接以该类作为顶级容器构造模板，作为 <code>map.infoWindow.content</code>.</p>
+
+	@mxml
+	<p> 
+	下面代码演示如何使用 <code>ClearMapTool</code> 类： 
+	<pre>
+	&lt;ags:GroupRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	                   xmlns:s="library://ns.adobe.com/flex/spark" 
+	                   xmlns:mx="library://ns.adobe.com/flex/mx" 
+	                   xmlns:ags="http://www.xzdbd.net/2013/flex/ags"
+	                   xmlns:as3core="http://www.xzdbd.net/2013/flex/as3core"
+	                   xmlns:picLoader="com.xzdbd.components.picLoader.*" 
+	                   creationComplete="creationCompleteHandler()"		
+	                   height="100%" &gt;
+		<p>
+		...（此处填充模板布局代码及脚本）
+		</p>
+	/&gt;
+	</pre>
+	</p>
+
+	@author 郝超
+	创建于 2012-3-27,下午01:14:47.
+-->
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 implements="mx.core.IDataRenderer"
+		 creationComplete="creationCompleteHandler()" >
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.core.IDataRenderer;
+			import mx.events.FlexEvent;
+			
+			
+			[Bindable]
+			private var _data:Object;
+			
+			/**
+			 * 实现接口 IDataRenderer 中的属性 data 的 getter/setter 方法。
+			 */
+			[Bindable("dataChange")]
+			public function get data():Object 
+			{
+				return _data;
+			}
+			/**
+			 * @private
+			 */
+			public function set data(value:Object):void 
+			{
+				if(value)
+				{
+					_data = value;
+					dispatchEvent(new FlexEvent(FlexEvent.DATA_CHANGE));
+				}
+			}
+			
+			/**
+			 * 组件创建完成时调用该方法。
+			 */
+			protected function creationCompleteHandler():void
+			{
+				removeEventListener(FlexEvent.CREATION_COMPLETE, creationCompleteHandler);
+				addEventListener(FlexEvent.DATA_CHANGE, dataChangeHandler);
+				dataChangeHandler(null);
+			}
+			
+			/**
+			 * 组件数据源更改时调用该方法。
+			 */
+			protected function dataChangeHandler(event:FlexEvent):void
+			{
+				if (data == null)
+				{
+					return;
+				}
+			}
+		]]>
+	</fx:Script>
+	
+</s:Group>
+
+
+

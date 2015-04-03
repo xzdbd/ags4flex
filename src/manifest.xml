@@ -4,39 +4,39 @@
 
 <componentPackage>
 	<!-- components -->
-	<component id="ClusterRenderer" class="com.zdwp.ags4flex.components.ClusterRenderer"/>
-	<component id="GroupRenderer" class="com.zdwp.ags4flex.components.infoWindow.GroupRenderer"/>
-	<component id="InfoWindowForRoll" class="com.zdwp.ags4flex.components.infoWindow.InfoWindowForRoll"/>
-	<component id="SingleInfoWindow" class="com.zdwp.ags4flex.components.infoWindow.SingleInfoWindow"/>
-	<component id="TextInfoRenderer" class="com.zdwp.ags4flex.components.infoWindow.TextInfoRenderer"/>
-	<component id="LayerListControl" class="com.zdwp.ags4flex.components.LayerListControl"/>
-	<component id="GISPageControl" class="com.zdwp.ags4flex.components.GISPageControl"/>
-	<component id="GeneralDrawTool" class="com.zdwp.ags4flex.components.mapTools.GeneralDrawTool"/>
-	<component id="GeneralMeasureTool" class="com.zdwp.ags4flex.components.mapTools.GeneralMeasureTool"/>
-	<component id="ClearMapTool" class="com.zdwp.ags4flex.components.mapTools.ClearMapTool"/>
-	<component id="MapToolButton" class="com.zdwp.ags4flex.components.mapTools.supportClasses.MapToolButton"/>
+	<component id="ClusterRenderer" class="com.xzdbd.ags4flex.components.ClusterRenderer"/>
+	<component id="GroupRenderer" class="com.xzdbd.ags4flex.components.infoWindow.GroupRenderer"/>
+	<component id="InfoWindowForRoll" class="com.xzdbd.ags4flex.components.infoWindow.InfoWindowForRoll"/>
+	<component id="SingleInfoWindow" class="com.xzdbd.ags4flex.components.infoWindow.SingleInfoWindow"/>
+	<component id="TextInfoRenderer" class="com.xzdbd.ags4flex.components.infoWindow.TextInfoRenderer"/>
+	<component id="LayerListControl" class="com.xzdbd.ags4flex.components.LayerListControl"/>
+	<component id="GISPageControl" class="com.xzdbd.ags4flex.components.GISPageControl"/>
+	<component id="GeneralDrawTool" class="com.xzdbd.ags4flex.components.mapTools.GeneralDrawTool"/>
+	<component id="GeneralMeasureTool" class="com.xzdbd.ags4flex.components.mapTools.GeneralMeasureTool"/>
+	<component id="ClearMapTool" class="com.xzdbd.ags4flex.components.mapTools.ClearMapTool"/>
+	<component id="MapToolButton" class="com.xzdbd.ags4flex.components.mapTools.supportClasses.MapToolButton"/>
 	
 	<!-- events -->
-	<component id="LinkEvent" class="com.zdwp.ags4flex.events.LinkEvent"/>
-	<component id="LayerSwitchEvent" class="com.zdwp.ags4flex.events.LayerSwitchEvent"/>
+	<component id="LinkEvent" class="com.xzdbd.ags4flex.events.LinkEvent"/>
+	<component id="LayerSwitchEvent" class="com.xzdbd.ags4flex.events.LayerSwitchEvent"/>
 	
 	<!-- managers -->
-	<component id="GraphicsLayerManager" class="com.zdwp.ags4flex.managers.GraphicsLayerManager"/>
-	<component id="QueryManager" class="com.zdwp.ags4flex.managers.QueryManager"/>
+	<component id="GraphicsLayerManager" class="com.xzdbd.ags4flex.managers.GraphicsLayerManager"/>
+	<component id="QueryManager" class="com.xzdbd.ags4flex.managers.QueryManager"/>
 	
 	<!-- services -->
-	<component id="SOEService" class="com.zdwp.ags4flex.services.SOEService"/>
+	<component id="SOEService" class="com.xzdbd.ags4flex.services.SOEService"/>
 	
 	<!-- skins -->
-	<component id="SimpleScaleBarSkin" class="com.zdwp.ags4flex.skins.SimpleScaleBarSkin"/>
+	<component id="SimpleScaleBarSkin" class="com.xzdbd.ags4flex.skins.SimpleScaleBarSkin"/>
 	
 	<!-- utils -->
-	<component id="FlashEffects" class="com.zdwp.ags4flex.utils.FlashEffects"/>
-	<component id="GeometryUtils" class="com.zdwp.ags4flex.utils.GeometryUtils"/>
-	<component id="LayerUtils" class="com.zdwp.ags4flex.utils.LayerUtils"/>
-	<component id="SpaceAnalysisUtils" class="com.zdwp.ags4flex.utils.SpaceAnalysisUtils"/>
-	<component id="LineCutParameters" class="com.zdwp.ags4flex.utils.supportClasses.LineCutParameters"/>
-	<component id="MapServiceType" class="com.zdwp.ags4flex.utils.supportClasses.MapServiceType"/>
+	<component id="FlashEffects" class="com.xzdbd.ags4flex.utils.FlashEffects"/>
+	<component id="GeometryUtils" class="com.xzdbd.ags4flex.utils.GeometryUtils"/>
+	<component id="LayerUtils" class="com.xzdbd.ags4flex.utils.LayerUtils"/>
+	<component id="SpaceAnalysisUtils" class="com.xzdbd.ags4flex.utils.SpaceAnalysisUtils"/>
+	<component id="LineCutParameters" class="com.xzdbd.ags4flex.utils.supportClasses.LineCutParameters"/>
+	<component id="MapServiceType" class="com.xzdbd.ags4flex.utils.supportClasses.MapServiceType"/>
 	
 </componentPackage>
 

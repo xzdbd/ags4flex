@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!---
+	通用线条绘制工具.
+
+	@mxml
+	<p> 
+	下面代码演示如何使用 <code>GeneralDrawTool</code> 类： 
+	<p>首先，引用命名空间  <b><code>xmlns:ags="http://www.xzdbd.net/2013/flex/ags"</code></b>，调用如下：</p>
+	<pre>
+	&lt;ags:GeneralDrawTool
+		<b>Properties</b>
+		iconUrl="./images/drawIcon.png"
+		map="{map}" /&gt;
+	
+	其中，map 为地图 Map 的引用.
+	</pre>
+	</p>
+
+	@author 郝超
+	创建于 2013-5-22,下午4:14:08.
+-->
+<supportClasses:MapToolButton xmlns:fx="http://ns.adobe.com/mxml/2009" 
+							  xmlns:s="library://ns.adobe.com/flex/spark" 
+							  xmlns:mx="library://ns.adobe.com/flex/mx" 
+							  xmlns:esri="http://www.esri.com/2008/ags" 
+							  xmlns:flash="flash.text.*"
+							  xmlns:supportClasses="com.xzdbd.ags4flex.components.mapTools.supportClasses.*"
+							  toolClick="activeDrawTool(event)"
+							  iconUrl="{IconAssets.iconClass('drawLineIcon')}"
+							  toolTip="线型绘制"  >
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Graphic;
+			import com.esri.ags.events.DrawEvent;
+			import com.esri.ags.events.MapMouseEvent;
+			import com.esri.ags.geometry.MapPoint;
+			import com.esri.ags.geometry.Polyline;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.symbols.PictureMarkerSymbol;
+			import com.esri.ags.symbols.SimpleLineSymbol;
+			import com.esri.ags.symbols.TextSymbol;
+			import com.esri.ags.tools.DrawTool;
+			import com.xzdbd.ags4flex.IconAssets;
+			import com.xzdbd.ags4flex.managers.GraphicsLayerManager;
+			
+			import mx.events.FlexEvent;
+			import mx.managers.CursorManager;
+			import mx.managers.CursorManagerPriority;
+			
+			
+			//线样式
+			private var lineSymbol:SimpleLineSymbol;
+			//绘制时的中间节点样式
+			private var nodeSymbol:PictureMarkerSymbol;
+			//绘制时出现的清除按钮样式
+			private var clearBtnSymbol:PictureMarkerSymbol;
+			//绘制信息提示文本框样式
+			private var toolTipSymbol:TextSymbol;
+			
+			//绘图工具对象
+			private var drawTool:DrawTool;
+			
+			//绘图工具宿主图层
+			private var drawToolGraphicsLayer:GraphicsLayer;
+			//绘图信息画布图层
+			private var drawSymbolGraphicsLayer:GraphicsLayer;
+			
+			//绘制线条过程中，记录上一固定转折点
+			private var preNodePoint:MapPoint;
+			
+			//随鼠标移动的动态Graphic
+			private var dynPointGraphic:Graphic;
+			
+			//绘制线结束时终点对应的Graphic，用来对应清除线条的关闭按钮
+			private var endPointGraphic:Graphic;
+			
+			//绘图工具是否激活标识
+			private var isActivingDrawTool:Boolean;
+			
+			/**
+			 * 重写父类初始化方法。
+			 */
+			override protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				lineSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, 0xfd8044, 1.0, 2);
+				nodeSymbol = new PictureMarkerSymbol(IconAssets.iconClass("drawNodeIcon"), 8, 8);
+				clearBtnSymbol = new PictureMarkerSymbol(IconAssets.iconClass("clearDrawIcon"), 16, 16, 15);
+				
+				var textFormat:TextFormat = new TextFormat("宋体", 13, null, false, null, null, null, null, null, 0, 0);
+				toolTipSymbol = new TextSymbol("", "", 0x666666, 1.0, true, 0xFF0000, true, 0xFFFFFF, "below", 0, 0, -20, textFormat);
+				
+				drawToolGraphicsLayer = GraphicsLayerManager.getInstance().createGraphicsLayer("drawToolLayer", map);
+				drawSymbolGraphicsLayer = GraphicsLayerManager.getInstance().createGraphicsLayer("measureSymbolLayer", map);
+				drawToolGraphicsLayer.autoMoveGraphicsToTop = false;
+				drawSymbolGraphicsLayer.autoMoveGraphicsToTop = false;
+				
+				//绘图对象
+				drawTool = new DrawTool(map);
+				drawTool.lineSymbol = lineSymbol;
+				drawTool.showDrawTips = false;
+				
+				//实例化特殊点
+				dynPointGraphic = new Graphic();
+				dynPointGraphic.symbol = toolTipSymbol;
+				endPointGraphic = new Graphic();
+				endPointGraphic.symbol = clearBtnSymbol;
+				endPointGraphic.addEventListener(MouseEvent.CLICK, endGraphicClickHandler);
+				endPointGraphic.toolTip = "清除本次操作";
+				endPointGraphic.buttonMode = true;
+			}
+			
+			/**
+			 * 清除当前测量结果。
+			 */
+			private function endGraphicClickHandler(event:MouseEvent):void
+			{
+				//清空图层
+				drawToolGraphicsLayer.clear();
+				drawSymbolGraphicsLayer.clear();
+				dynPointGraphic.geometry = null;
+				endPointGraphic.geometry = null;
+				preNodePoint = null;
+			}
+			
+			/**
+			 * 开始测量，激活测量绘制工具。
+			 */
+			private function activeDrawTool(event:MouseEvent):void
+			{
+				if(isActivingDrawTool)
+				{
+					drawTool.deactivate();
+					drawTool.dispatchEvent(new DrawEvent(DrawEvent.DRAW_END));
+					endPointGraphic.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+					return;
+				}
+				isActivingDrawTool = true;
+				
+				//设置鼠标样式
+				CursorManager.setCursor(IconAssets.iconClass("cursorForDraw"), CursorManagerPriority.HIGH, 0, -24);
+				
+				//添加绘制完成监听
+				drawTool.addEventListener(DrawEvent.DRAW_END, measureDrawEndHandler);
+				
+				//添加地图单击监听
+				map.addEventListener(MapMouseEvent.MAP_CLICK, mapClickHandler);
+				
+				//添加地图鼠标移动监听
+				map.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+				
+				//激活绘图工具
+				drawTool.activate(DrawTool.POLYLINE);
+				
+				//添加动态点到图层
+				drawSymbolGraphicsLayer.add(dynPointGraphic);
+			}
+			
+			/**
+			 * 绘图过程中，地图点击监听函数。
+			 */
+			private function mapClickHandler(event:MapMouseEvent):void
+			{
+				//添加转折节点
+				var nodeGraphic:Graphic = new Graphic(event.mapPoint, nodeSymbol);
+				drawSymbolGraphicsLayer.add(nodeGraphic);
+				drawSymbolGraphicsLayer.refresh();
+				
+				//存储当前固定节点
+				preNodePoint = event.mapPoint;
+			}
+			
+			/**
+			 * 绘制期间，鼠标移动监听事件。
+			 */
+			private function mouseMoveHandler(event:MouseEvent):void
+			{
+				var curPoint:MapPoint = map.toMapFromStage(event.stageX, event.stageY);
+				
+				//更新标签
+				if(preNodePoint == null)
+				{
+					updateDynDataTip(curPoint, "单击确定起点");
+				}
+				else
+				{
+					updateDynDataTip(curPoint, "双击确定终点");
+				}
+			}
+			
+			/**
+			 * 绘制结束处理函数。
+			 */
+			private function measureDrawEndHandler(event:DrawEvent):void
+			{
+				//移除监听
+				drawTool.removeEventListener(DrawEvent.DRAW_END, measureDrawEndHandler);
+				map.removeEventListener(MapMouseEvent.MAP_CLICK, mapClickHandler);
+				map.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+				
+				//注销绘图工具
+				drawTool.deactivate();
+				isActivingDrawTool = false;
+				
+				//清除鼠标样式
+				CursorManager.removeAllCursors();
+				
+				//添加绘制线条到地图图层
+				var graphic:Graphic = event.graphic;
+				if(graphic)
+				{
+					drawToolGraphicsLayer.add(graphic);
+					
+					//更新图层上绘制线条终点位置和符号
+					var polyline:Polyline = graphic.geometry as Polyline;
+					var endPoint:MapPoint = polyline.paths[0][Number(polyline.paths[0].length)-1] as MapPoint;
+					endPointGraphic.geometry = endPoint;
+					drawSymbolGraphicsLayer.refresh();
+					
+					//更新结果提示
+					updateDynDataTip(null);
+					
+					//添加终点（关闭按钮）到图层
+					drawSymbolGraphicsLayer.add(endPointGraphic);
+				}
+			}
+			
+			/**
+			 * 更新动态鼠标跟随提示标签。
+			 * @param point 最新鼠标点击的坐标点。
+			 * @param htmlText 当前需要更新的文本提示框文本信息。
+			 */
+			private function updateDynDataTip(point:MapPoint=null, htmlText:String=""):void
+			{
+				if(point)
+				{
+					toolTipSymbol.htmlText = htmlText;
+					dynPointGraphic.geometry = point;
+					dynPointGraphic.symbol = toolTipSymbol;
+					drawSymbolGraphicsLayer.refresh();
+				}
+				else
+				{
+					drawSymbolGraphicsLayer.remove(dynPointGraphic);
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+</supportClasses:MapToolButton>
+
+
+
+
+
+
+
+
+

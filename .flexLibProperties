@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
   <includeClasses>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.checkTree.controls.TriStateCheckBoxIcon"/>
-    <classEntry path="com.zdwp.ags4flex.components.infoWindow.TextInfoRenderer"/>
-    <classEntry path="com.zdwp.ags4flex.components.ClusterRenderer"/>
-    <classEntry path="com.zdwp.ags4flex.components.LayerListControl"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.event.LayerEventBus"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.classes.LayerList"/>
-    <classEntry path="com.zdwp.ags4flex.components.GISPageControl"/>
-    <classEntry path="com.zdwp.ags4flex.components.supportClasses.Cluster"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.checkTree.classes.CheckTreeRenderer"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.checkTree.CheckTree"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.checkTree.controls.TriStateCheckBox"/>
-    <classEntry path="com.zdwp.ags4flex.components.infoWindow.InfoWindowForRoll"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.checkTree.classes.TreeLineStyle"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.utils.MapUtil"/>
-    <classEntry path="com.zdwp.ags4flex.components.infoWindow.SingleInfoWindow"/>
-    <classEntry path="com.zdwp.ags4flex.events.LayerSwitchEvent"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.utils.MapLayerInfoManager"/>
-    <classEntry path="com.zdwp.ags4flex.components.layerControlClasses.classes.LayerItem"/>
-    <classEntry path="com.zdwp.ags4flex.components.infoWindow.GroupRenderer"/>
-    <classEntry path="com.zdwp.ags4flex.components.mapTools.supportClasses.MapToolButton"/>
-    <classEntry path="com.zdwp.ags4flex.utils.supportClasses.LineCutParameters"/>
-    <classEntry path="com.zdwp.ags4flex.IconAssets"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.checkTree.controls.TriStateCheckBoxIcon"/>
+    <classEntry path="com.xzdbd.ags4flex.components.infoWindow.TextInfoRenderer"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.event.LayerEventBus"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.classes.LayerList"/>
+    <classEntry path="com.xzdbd.ags4flex.components.GISPageControl"/>
+    <classEntry path="com.xzdbd.ags4flex.components.supportClasses.Cluster"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.checkTree.classes.CheckTreeRenderer"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.checkTree.controls.TriStateCheckBox"/>
+    <classEntry path="com.xzdbd.ags4flex.components.infoWindow.InfoWindowForRoll"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.checkTree.classes.TreeLineStyle"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.utils.MapUtil"/>
+    <classEntry path="com.xzdbd.ags4flex.events.LayerSwitchEvent"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.utils.MapLayerInfoManager"/>
+    <classEntry path="com.xzdbd.ags4flex.components.layerControlClasses.classes.LayerItem"/>
+    <classEntry path="com.xzdbd.ags4flex.components.mapTools.supportClasses.MapToolButton"/>
+    <classEntry path="com.xzdbd.ags4flex.utils.supportClasses.LineCutParameters"/>
+    <classEntry path="com.xzdbd.ags4flex.IconAssets"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests>
-    <namespaceManifestEntry manifest="manifest.xml" namespace="http://www.zdwp.net/2013/flex/ags"/>
+    <namespaceManifestEntry manifest="manifest.xml" namespace="http://www.xzdbd.net/2013/flex/ags"/>
   </namespaceManifests>
 </flexLibProperties>
