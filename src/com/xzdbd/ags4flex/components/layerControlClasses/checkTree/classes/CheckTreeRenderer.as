@@ -28,7 +28,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.checkTree.classes
     /**************************************************
      * 三状态复选框树的自定义的项呈示器.
 	 * 
-     * @author 郝超
+     * @author xzdbd
 	 * 创建于 2012-4-10,下午08:23:42.
 	 * 
      **************************************************/

@@ -1,5 +1,5 @@
 # ags4flex
-This is the source code for ArcGIS for Flex Api Expand. It is originally designed to expand the Flex-Viewer Framework.
+This is the source code for ArcGIS for Flex API Expand. It is originally designed to expand the Flex-Viewer Framework.
 # Features
 ## Component Package
 ### components
@@ -45,7 +45,7 @@ This is the source code for ArcGIS for Flex Api Expand. It is originally designe
 # Contributing
 Anyone and everyone is welcome to contribute.
 # Licensing
-Copyright 2012-2013 Esri
+Copyright xzdbd
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

@@ -27,7 +27,7 @@ package com.xzdbd.ags4flex.components.infoWindow
 	 * infoWindowForRollOver.addInfoWindowForRollOver(graphic, popupUI, graphic.attributes);
 	 * </listing>
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-3-27,下午01:52:34.
 	 * 
 	 **************************************************/ 

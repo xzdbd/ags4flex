@@ -12,7 +12,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.classes
 	/**************************************************
 	 * 图层列表树组件实现类.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-11-27,上午09:53:28.
 	 * 
 	 **************************************************/

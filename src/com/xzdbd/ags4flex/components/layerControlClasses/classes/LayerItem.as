@@ -10,7 +10,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.classes
 	/**************************************************
 	 * 图层信息实体类.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-4-11,上午09:24:20.
 	 * 
 	 **************************************************/

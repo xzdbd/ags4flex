@@ -15,7 +15,7 @@ package com.xzdbd.ags4flex.components.supportClasses
      * </ol> 
      * </p> 
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-5-9,下午6:35:42.
 	 * 
      *****************************************************/

@@ -28,7 +28,7 @@ package com.xzdbd.as3core.components
 	 * </pre>
      * </p>
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-4-16,下午06:00:04.
 	 * 
 	 *******************************************/ 

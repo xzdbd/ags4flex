@@ -38,7 +38,7 @@ package com.xzdbd.as3core.components.labels
 	 * </pre>
      * </p>
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-5-22,下午11:16:44.
 	 * 
 	 **************************************************/ 

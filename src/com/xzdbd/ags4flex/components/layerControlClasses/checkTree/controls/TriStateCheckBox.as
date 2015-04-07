@@ -8,7 +8,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.checkTree.controls
 	/**************************************************
 	 * 支持三态选择的复选框.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-4-10,下午01:25:22.
 	 * 
 	 **************************************************/

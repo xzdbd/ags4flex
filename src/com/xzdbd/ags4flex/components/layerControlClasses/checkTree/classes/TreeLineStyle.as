@@ -36,7 +36,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.checkTree.classes
 	/************************************************************
 	 * 该类实现树组件(Tree)各节点之间的关联线段绘制.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-11-26,下午04:23:42.
 	 * 
 	 ************************************************************/    

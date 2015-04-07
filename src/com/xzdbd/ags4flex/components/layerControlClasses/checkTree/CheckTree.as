@@ -12,7 +12,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.checkTree
 	/**************************************************
 	 * 支持三状态复选框的树控件.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-4-10,下午01:25:22.
 	 * 
 	 **************************************************/

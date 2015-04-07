@@ -29,7 +29,7 @@ package com.xzdbd.ags4flex.components.infoWindow
 	 * SingleInfoWindow(graphic.attributes.infoWindow).showInfoWindowDirectly(mapPoint);
 	 * </listing>
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-3-27,下午01:52:34.
 	 * 
 	 **************************************************/ 

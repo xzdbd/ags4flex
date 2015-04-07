@@ -5,7 +5,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.checkTree.controls
 	/******************************************************
 	 * 三态复选框选择状态（中间状态）填充.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-4-10,下午01:30:22.
 	 * 
 	 ******************************************************/

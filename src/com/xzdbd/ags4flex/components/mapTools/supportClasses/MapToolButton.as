@@ -34,7 +34,7 @@ package com.xzdbd.ags4flex.components.mapTools.supportClasses
 	 * </pre>
      * </p>
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-7-19,下午2:23:28.
 	 * 
 	 *******************************************/ 

@@ -9,7 +9,7 @@ package com.xzdbd.ags4flex.components.layerControlClasses.utils
 	/*********************************************
 	 * 地图(Map)工具类.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2012-11-27,上午10:19:13.
 	 * 
 	 *********************************************/

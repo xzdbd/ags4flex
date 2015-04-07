@@ -27,7 +27,7 @@ package com.xzdbd.as3core.components.labels
 	 * 
 	 * @see com.xzdbd.as3core.components.SingleLine
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-5-23,下午2:23:57.
      *  
 	 *******************************************/ 

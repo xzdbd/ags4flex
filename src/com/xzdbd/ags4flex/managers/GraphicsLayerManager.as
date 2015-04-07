@@ -20,7 +20,7 @@ package com.xzdbd.ags4flex.managers
      * </ol> 
      * </p> 
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-6-6,上午11:05:41 。
 	 * 
 	 ****************************************************/

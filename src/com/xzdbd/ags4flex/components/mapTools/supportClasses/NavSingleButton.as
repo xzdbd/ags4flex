@@ -6,7 +6,7 @@ package com.xzdbd.ags4flex.components.mapTools.supportClasses
 	/**
 	 * 地图工具栏工具按钮基类.
 	 * 
-	 * @author 郝超
+	 * @author xzdbd
 	 * 创建于 2013-5-22,下午3:18:08.
 	 * 
 	 */
