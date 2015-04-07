@@ -37,6 +37,11 @@ This is the source code for ArcGIS for Flex Api Expand. It is originally designe
 * LineCutParameters
 * MapServiceType
 
+# Instructions(Getting Started)
+1. In Adobe Flash Builder 4.6 or 4.7, Right click on your project -> Click "Properties" -> Click "Flex Build Path".
+2. Click "Add SWC...", browse the location of the ags4flex.swc.
+3. Add reference in MXML file, add `xmlns:ags="http://www.xzdbd.net/2013/flex/ags"`.
+
 # Contributing
 Anyone and everyone is welcome to contribute.
 # Licensing
