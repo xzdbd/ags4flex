@@ -2,6 +2,7 @@
 This is the source code for ArcGIS for Flex Api Expand. It is originally designed to expand the Flex-Viewer Framework.
 # Features
 ## Component Package
+### components
 * ClusterRenderer
 * GroupRenderer
 * InfoWindowForRoll
@@ -13,6 +14,23 @@ This is the source code for ArcGIS for Flex Api Expand. It is originally designe
 * GeneralMeasureTool
 * ClearMapTool
 * MapToolButton
+### events
+* LinkEvent
+* LayerSwitchEvent
+### managers
+* GraphicsLayerManager
+* QueryManager
+### services
+* SOEService
+### skins
+* SimpleScaleBarSkin
+### utils
+* FlashEffects
+* GeometryUtils
+* LayerUtils
+* SpaceAnalysisUtils
+* LineCutParameters
+* MapServiceType
 
 # Contributing
 Anyone and everyone is welcome to contribute.
