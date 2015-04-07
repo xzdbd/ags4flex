@@ -1,5 +1,18 @@
 # ags4flex
 This is the source code for ArcGIS for Flex Api Expand. It is originally designed to expand the Flex-Viewer Framework.
+# Features
+## Component Package
+* ClusterRenderer
+* GroupRenderer
+* InfoWindowForRoll
+* SingleInfoWindow
+* TextInfoRenderer
+* LayerListControl
+* GISPageControl
+* GeneralDrawTool
+* GeneralMeasureTool
+* ClearMapTool
+* MapToolButton
 # Contributing
 Anyone and everyone is welcome to contribute.
 # Licensing
