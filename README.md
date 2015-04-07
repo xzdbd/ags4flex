@@ -14,16 +14,21 @@ This is the source code for ArcGIS for Flex Api Expand. It is originally designe
 * GeneralMeasureTool
 * ClearMapTool
 * MapToolButton
+
 ### events
 * LinkEvent
 * LayerSwitchEvent
+
 ### managers
 * GraphicsLayerManager
 * QueryManager
+
 ### services
 * SOEService
+
 ### skins
 * SimpleScaleBarSkin
+
 ### utils
 * FlashEffects
 * GeometryUtils
