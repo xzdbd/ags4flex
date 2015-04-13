@@ -21,6 +21,6 @@
   </includeClasses>
   <includeResources/>
   <namespaceManifests>
-    <namespaceManifestEntry manifest="manifest.xml" namespace="http://www.xzdbd.net/2013/flex/ags"/>
+    <namespaceManifestEntry manifest="manifest.xml" namespace="http://www.xzdbd.com/2013/flex/ags"/>
   </namespaceManifests>
 </flexLibProperties>
